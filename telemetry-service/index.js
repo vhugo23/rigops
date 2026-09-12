@@ -46,6 +46,24 @@ app.post('/telemetry', async (req, res) => {
     res.status(500).json({ error: 'Failed to store telemetry reading' });
   }
 });
+app.get('/telemetry/:wellId', async (req, res) => {
+  const { wellId } = req.params;
+  const limit = parseInt(req.query.limit) || 50;
+
+  try {
+    const result = await pool.query(
+      `SELECT * FROM telemetry_readings
+       WHERE well_id = $1
+       ORDER BY timestamp DESC
+       LIMIT $2`,
+      [wellId, limit]
+    );
+    res.json(result.rows);
+  } catch (err) {
+    console.error('Failed to fetch telemetry readings:', err.message);
+    res.status(500).json({ error: 'Failed to fetch telemetry readings' });
+  }
+});
 app.listen(PORT, () => {
   console.log(`Telemetry Ingestion service listening on port ${PORT}`);
 });
