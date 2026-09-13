@@ -21,6 +21,13 @@ builder.Services.AddHttpClient("AiService", client =>
 });
 builder.Services.AddScoped<IAnomalyServiceClient, AnomalyServiceClient>();
 builder.Services.AddScoped<ITelemetryServiceClient, TelemetryServiceClient>();
+
+builder.Services.AddHttpClient("NotificationService", client =>
+{
+    client.BaseAddress = new Uri(builder.Configuration["NotificationServiceUrl"] ?? "http://localhost:3002");
+});
+builder.Services.AddScoped<INotificationClient, NotificationClient>();
+builder.Services.AddScoped<IAlertService, AlertService>();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddSwaggerGen();
 
