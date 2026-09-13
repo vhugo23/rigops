@@ -1,4 +1,4 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { WellService, Well } from '../../services/well.service';
 import { RouterLink } from '@angular/router';
@@ -13,6 +13,11 @@ export class WellsList implements OnInit {
   wells = signal<Well[]>([]);
   loading = signal(true);
   error = signal<string | null>(null);
+
+  totalCount = computed(() => this.wells().length);
+  normalCount = computed(() => this.wells().filter((w) => w.status === 0).length);
+  warningCount = computed(() => this.wells().filter((w) => w.status === 1).length);
+  criticalCount = computed(() => this.wells().filter((w) => w.status === 2).length);
 
   constructor(private wellService: WellService) {}
 

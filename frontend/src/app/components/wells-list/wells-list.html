@@ -9,8 +9,18 @@
   } @else if (error()) {
     <p class="state-message error">{{ error() }}</p>
   } @else if (wells().length === 0) {
-    <p class="state-message">No wells found.</p>
+    <div class="empty-state">
+      <p>No wells available.</p>
+      <p class="empty-state-hint">Wells will appear here once they are created via the Core API.</p>
+    </div>
   } @else {
+    <div class="summary-band">
+      <span class="summary-item"><strong>{{ totalCount() }}</strong> total</span>
+      <span class="summary-item summary-normal"><strong>{{ normalCount() }}</strong> normal</span>
+      <span class="summary-item summary-warning"><strong>{{ warningCount() }}</strong> warning</span>
+      <span class="summary-item summary-critical"><strong>{{ criticalCount() }}</strong> critical</span>
+    </div>
+
     <table>
       <thead>
         <tr>
@@ -22,7 +32,7 @@
       </thead>
       <tbody>
         @for (well of wells(); track well.id) {
-          <tr>
+          <tr class="well-row">
             <td class="well-name"><a routerLink="/wells/{{ well.id }}">{{ well.name }}</a></td>
             <td>{{ well.rigName || '-' }}</td>
             <td>{{ well.currentDepth | number }} ft</td>
