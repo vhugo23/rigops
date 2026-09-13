@@ -67,6 +67,64 @@ public class WellsController : ControllerBase
 
         return Content(result.RawJson!, "application/json");
     }
+    [HttpGet("{id}/anomaly-check")]
+    public async Task<IActionResult> CheckAnomaly(
+        int id,
+        [FromServices] ITelemetryServiceClient telemetryClient,
+        [FromServices] IAnomalyServiceClient anomalyClient)
+    {
+        var well = await _wellRepository.GetByIdAsync(id);
+        if (well is null)
+        {
+            return NotFound();
+        }
+
+        var telemetryResult = await telemetryClient.GetRecentReadingsAsync(id, limit: 10);
+        if (!telemetryResult.Success)
+        {
+            return StatusCode(503, new
+            {
+                message = "Telemetry data is temporarily unavailable, cannot run anomaly check.",
+                wellId = id
+            });
+        }
+
+        using var telemetryDoc = System.Text.Json.JsonDocument.Parse(telemetryResult.RawJson!);
+        var readings = telemetryDoc.RootElement.EnumerateArray()
+            .Select(r => new
+            {
+                depth = r.GetProperty("depth").GetDouble(),
+                rate_of_penetration = r.GetProperty("rate_of_penetration").GetDouble(),
+                weight_on_bit = r.GetProperty("weight_on_bit").GetDouble(),
+                torque = r.GetProperty("torque").GetDouble(),
+                rpm = r.GetProperty("rpm").GetDouble(),
+                pressure = r.GetProperty("pressure").GetDouble(),
+                temperature = r.GetProperty("temperature").GetDouble(),
+                mud_flow = r.GetProperty("mud_flow").GetDouble(),
+                vibration = r.GetProperty("vibration").GetDouble(),
+            })
+            .Reverse()
+            .ToList();
+
+        var analyzeRequestJson = System.Text.Json.JsonSerializer.Serialize(new
+        {
+            well_id = id.ToString(),
+            readings
+        });
+
+        var anomalyResult = await anomalyClient.AnalyzeAsync(id.ToString(), analyzeRequestJson);
+
+        if (!anomalyResult.Success)
+        {
+            return StatusCode(503, new
+            {
+                message = "Anomaly detection is temporarily unavailable. Telemetry monitoring remains operational.",
+                wellId = id
+            });
+        }
+
+        return Content(anomalyResult.RawJson!, "application/json");
+    }
 
     [HttpPost]
     public async Task<ActionResult<Well>> Create(Well well)

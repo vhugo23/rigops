@@ -15,6 +15,11 @@ builder.Services.AddHttpClient("TelemetryService", client =>
 {
     client.BaseAddress = new Uri(builder.Configuration["TelemetryServiceUrl"] ?? "http://localhost:3001");
 });
+builder.Services.AddHttpClient("AiService", client =>
+{
+    client.BaseAddress = new Uri(builder.Configuration["AiServiceUrl"] ?? "http://localhost:8000");
+});
+builder.Services.AddScoped<IAnomalyServiceClient, AnomalyServiceClient>();
 builder.Services.AddScoped<ITelemetryServiceClient, TelemetryServiceClient>();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddSwaggerGen();
