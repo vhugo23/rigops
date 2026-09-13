@@ -2,13 +2,15 @@ import { test, expect } from '@playwright/test';
 
 test('dashboard to well detail to alerts happy path', async ({ page }) => {
   // Start at the Wells page (root redirects here)
-  await page.goto('/');
-  await expect(page.getByRole('heading', { name: 'Wells' })).toBeVisible();
+ await page.goto('/');
+await expect(page.getByRole('heading', { name: 'Operations Overview' })).toBeVisible();
 
+await page.getByRole('link', { name: 'Wells' }).click();
+await expect(page.getByRole('heading', { name: 'Wells' })).toBeVisible();
   // Click into a well
-  await page.getByRole('link', { name: 'Well 03' }).click();
+  await page.getByRole('link', { name: 'Well 01' }).click();
   await expect(page).toHaveURL(/\/wells\/\d+/);
-  await expect(page.getByRole('heading', { name: 'Well 03' })).toBeVisible({ timeout: 10000 });
+  await expect(page.getByRole('heading', { name: 'Well 01' })).toBeVisible({ timeout: 10000 });
 
   // Telemetry section should be present
   await expect(page.getByRole('heading', { name: 'Telemetry' })).toBeVisible();
