@@ -1,0 +1,58 @@
+<div class="alerts-page">
+  <div class="page-header">
+    <h1>Alerts</h1>
+    <p class="subtitle">Active drilling anomalies requiring attention</p>
+  </div>
+
+  @if (loading()) {
+    <p class="state-message">Loading alerts...</p>
+  } @else if (error()) {
+    <p class="state-message error">{{ error() }}</p>
+  } @else if (alerts().length === 0) {
+    <p class="state-message">No active alerts. All monitored wells are currently within expected operating ranges.</p>
+  } @else {
+    <table>
+      <thead>
+        <tr>
+          <th>Severity</th>
+          <th>Well</th>
+          <th>Signal</th>
+          <th>Score</th>
+          <th>Status</th>
+          <th>Detected</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (alert of alerts(); track alert.id) {
+          <tr>
+            <td>
+              <span class="severity-badge" [class]="'severity-' + alert.severity">
+                {{ severityLabel(alert.severity) }}
+              </span>
+            </td>
+            <td>Well {{ alert.wellId }}</td>
+            <td>{{ alert.signal }}</td>
+            <td>{{ alert.anomalyScore | number:'1.2-2' }}</td>
+            <td>
+              <span class="status-badge" [class]="'status-' + alert.status">
+                {{ statusLabel(alert.status) }}
+              </span>
+            </td>
+            <td>{{ alert.detectedAt | date:'short' }}</td>
+            <td>
+              @if (alert.status < 3) {
+                <button
+                  (click)="advance(alert)"
+                  [disabled]="transitioning() === alert.id"
+                >
+                  {{ transitioning() === alert.id ? 'Updating...' : nextActionLabel(alert.status) }}
+                </button>
+              }
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+</div>
