@@ -140,3 +140,124 @@ a:hover {
 .dot-status-1 { background: var(--status-warning-text); }
 .dot-status-2 { background: var(--status-critical-text); }
 .dot-status-3 { background: var(--status-offline-text); }
+
+.telemetry-panel {
+  grid-column: 1 / -1;
+  margin-top: var(--space-4);
+}
+
+.panel:has(.anomaly-result),
+.panel:has(.anomaly-block) {
+  grid-column: 1 / -1;
+  margin-top: var(--space-4);
+}
+
+.chart-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
+}
+
+@media (max-width: 900px) {
+  .chart-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+.chart-title {
+  margin: 0 0 var(--space-2);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+button {
+  padding: 0.4rem 0.9rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  background: var(--surface-card);
+  color: var(--text-primary);
+  cursor: pointer;
+}
+
+button:hover:not(:disabled) {
+  background: var(--surface-canvas);
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.anomaly-result {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: var(--space-4);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+  border-left: 4px solid var(--status-offline-text);
+  background: var(--surface-canvas);
+}
+
+@media (max-width: 900px) {
+  .anomaly-result {
+    grid-template-columns: 1fr;
+  }
+}
+
+.anomaly-result.severity-low { border-left-color: var(--status-offline-text); }
+.anomaly-result.severity-medium { border-left-color: var(--status-warning-text); background: #fff8ec; }
+.anomaly-result.severity-high { border-left-color: var(--status-critical-text); background: #fdf0f0; }
+.anomaly-result.severity-critical { border-left-color: #8b0000; background: #fbe6e6; }
+
+.anomaly-block-label {
+  display: block;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+  font-weight: 700;
+  margin-bottom: var(--space-2);
+}
+
+.anomaly-block p {
+  margin: 0;
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+}
+
+.anomaly-score {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
+}
+
+.score-value {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.severity-label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.anomaly-block ul {
+  margin: 0.4rem 0 0;
+  padding-left: 1.1rem;
+}
+
+.anomaly-block li {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+}
+
+.recommendation {
+  font-style: italic;
+}

@@ -107,5 +107,63 @@
         }
       </div>
     </div>
+    <div class="card panel telemetry-panel">
+      <div class="panel-header">
+        <h2>Telemetry — Primary Well</h2>
+      </div>
+      @if (telemetry().length === 0) {
+        <p class="state-message">No telemetry data available.</p>
+      } @else {
+        <div class="chart-row">
+          <div>
+            <h3 class="chart-title">Pressure Trend</h3>
+            <app-telemetry-chart [readings]="telemetry()" mode="pressure"></app-telemetry-chart>
+          </div>
+          <div>
+            <h3 class="chart-title">Correlated Signals</h3>
+            <app-telemetry-chart [readings]="telemetry()" mode="correlated"></app-telemetry-chart>
+          </div>
+        </div>
+      }
+    </div>
+
+    <div class="card panel">
+      <div class="panel-header">
+        <h2>Latest Anomaly Analysis</h2>
+        <button (click)="runAnomalyCheck()" [disabled]="anomalyLoading()">
+          {{ anomalyLoading() ? 'Analyzing...' : 'Run Anomaly Check' }}
+        </button>
+      </div>
+      @if (anomalyError()) {
+        <p class="state-message error">{{ anomalyError() }}</p>
+      } @else if (anomalyResult()) {
+        <div class="anomaly-result" [class]="'severity-' + anomalyResult()!.severity.toLowerCase()">
+          <div class="anomaly-block">
+            <span class="anomaly-block-label">Observed Data</span>
+            <p>{{ telemetry().length }} recent readings from Well {{ primaryWellId() }}.</p>
+          </div>
+          <div class="anomaly-block">
+            <span class="anomaly-block-label">Model Inference</span>
+            <div class="anomaly-score">
+              <span class="score-value">{{ anomalyResult()!.anomalyScore | number:'1.2-2' }}</span>
+              <span class="severity-label">{{ anomalyResult()!.severity }}</span>
+            </div>
+            @if (anomalyResult()!.signals.length > 0) {
+              <ul>
+                @for (signal of anomalyResult()!.signals; track signal) {
+                  <li>{{ signal }}</li>
+                }
+              </ul>
+            }
+          </div>
+          <div class="anomaly-block">
+            <span class="anomaly-block-label">Recommendation</span>
+            <p class="recommendation">{{ anomalyResult()!.recommendation }}</p>
+          </div>
+        </div>
+      } @else {
+        <p class="state-message">Run an anomaly check to populate analysis.</p>
+      }
+    </div>
   }
 </div>
