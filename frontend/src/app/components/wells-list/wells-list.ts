@@ -15,6 +15,16 @@ export class WellsList implements OnInit {
 
   constructor(private wellService: WellService) {}
 
+  statusLabel(status: number): string {
+    const labels: Record<number, string> = {
+      0: 'Normal',
+      1: 'Warning',
+      2: 'Critical',
+      3: 'Offline',
+    };
+    return labels[status] ?? 'Unknown';
+  }
+
   ngOnInit(): void {
     this.wellService.getAll().subscribe({
       next: (wells) => {
