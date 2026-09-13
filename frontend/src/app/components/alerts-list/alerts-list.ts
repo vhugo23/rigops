@@ -1,4 +1,4 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AlertService, Alert } from '../../services/alert.service';
 
@@ -13,6 +13,9 @@ export class AlertsList implements OnInit {
   loading = signal(true);
   error = signal<string | null>(null);
   transitioning = signal<number | null>(null);
+
+  activeAlerts = computed(() => this.alerts().filter((a) => a.status !== 3));
+  resolvedAlerts = computed(() => this.alerts().filter((a) => a.status === 3));
 
   constructor(private alertService: AlertService) {}
 
