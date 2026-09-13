@@ -1,0 +1,26 @@
+<div class="health-page">
+  <div class="page-header">
+    <h1>System Health</h1>
+    <p class="subtitle">Live status of all RigOps services</p>
+  </div>
+
+  @if (loading()) {
+    <p class="state-message">Checking services...</p>
+  } @else {
+    <div class="health-grid">
+      @for (service of services(); track service.name) {
+        <div class="health-card" [class.healthy]="service.status === 'healthy'" [class.unreachable]="service.status === 'unreachable'">
+          <span class="indicator-dot"></span>
+          <div class="health-info">
+            <span class="service-name">{{ service.name }}</span>
+            <span class="service-status">
+              {{ service.status === 'healthy' ? 'HEALTHY' : 'UNREACHABLE' }}
+            </span>
+          </div>
+        </div>
+      }
+    </div>
+
+    <button class="refresh-button" (click)="check()">Refresh</button>
+  }
+</div>

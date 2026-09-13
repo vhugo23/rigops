@@ -5,7 +5,14 @@ import statistics
 
 app = FastAPI(title="RigOps Anomaly Detection Service")
 
+from fastapi.middleware.cors import CORSMiddleware
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:4200"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 class TelemetryReading(BaseModel):
     depth: float
     rate_of_penetration: float
