@@ -7,16 +7,21 @@
   @if (loading()) {
     <p class="state-message">Checking services...</p>
   } @else {
+    <p class="summary-line">{{ healthyCount() }} of {{ services().length }} services healthy</p>
+
     <div class="health-grid">
       @for (service of services(); track service.name) {
         <div class="health-card" [class.healthy]="service.status === 'healthy'" [class.unreachable]="service.status === 'unreachable'">
-          <span class="indicator-dot"></span>
-          <div class="health-info">
+          <div class="health-card-top">
+            <span class="indicator-dot"></span>
             <span class="service-name">{{ service.name }}</span>
-            <span class="service-status">
-              {{ service.status === 'healthy' ? 'HEALTHY' : 'UNREACHABLE' }}
-            </span>
           </div>
+          <p class="service-description">{{ service.description }}</p>
+          <div class="health-card-meta">
+            <span class="service-status">{{ service.status === 'healthy' ? 'HEALTHY' : 'UNREACHABLE' }}</span>
+            <span class="latency">{{ service.latencyMs }} ms</span>
+          </div>
+          <span class="checked-at">Checked {{ service.checkedAt | date:'shortTime' }}</span>
         </div>
       }
     </div>

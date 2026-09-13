@@ -13,6 +13,8 @@ export class SystemHealth implements OnInit {
   services = signal<ServiceHealth[]>([]);
   loading = signal(true);
 
+  healthyCount = () => this.services().filter((s) => s.status === 'healthy').length;
+
   constructor(private healthService: HealthService) {}
 
   ngOnInit(): void {

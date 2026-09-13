@@ -5,7 +5,10 @@ import { environment } from '../../environments/environment';
 
 export interface ServiceHealth {
   name: string;
+  description: string;
   status: 'healthy' | 'unreachable';
+  latencyMs: number;
+  checkedAt: Date;
 }
 
 @Injectable({
@@ -14,19 +17,35 @@ export interface ServiceHealth {
 export class HealthService {
   constructor(private http: HttpClient) {}
 
-  private checkOne(name: string, url: string): Observable<ServiceHealth> {
+  private checkOne(name: string, description: string, url: string): Observable<ServiceHealth> {
+    const startedAt = performance.now();
+
     return this.http.get(`${url}/health`).pipe(
-      map(() => ({ name, status: 'healthy' as const })),
-      catchError(() => of({ name, status: 'unreachable' as const })),
+      map(() => ({
+        name,
+        description,
+        status: 'healthy' as const,
+        latencyMs: Math.round(performance.now() - startedAt),
+        checkedAt: new Date(),
+      })),
+      catchError(() =>
+        of({
+          name,
+          description,
+          status: 'unreachable' as const,
+          latencyMs: Math.round(performance.now() - startedAt),
+          checkedAt: new Date(),
+        }),
+      ),
     );
   }
 
   checkAll(): Observable<ServiceHealth>[] {
     return [
-      this.checkOne('Core API', environment.services.coreApi),
-      this.checkOne('Telemetry Ingestion', environment.services.telemetry),
-      this.checkOne('Anomaly Detection', environment.services.anomaly),
-      this.checkOne('Notification Relay', environment.services.notification),
+      this.checkOne('Core API', 'Client-facing orchestration', environment.services.coreApi),
+      this.checkOne('Telemetry Ingestion', 'Telemetry storage and retrieval', environment.services.telemetry),
+      this.checkOne('Anomaly Detection', 'Stateless anomaly scoring', environment.services.anomaly),
+      this.checkOne('Notification Relay', 'Notification audit relay', environment.services.notification),
     ];
   }
 }
