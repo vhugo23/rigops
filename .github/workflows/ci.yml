@@ -1,0 +1,36 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  backend-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "9.0.x"
+
+      - name: Restore
+        run: dotnet restore backend/RigOps.Api.Tests/RigOps.Api.Tests.csproj
+
+      - name: Build
+        run: dotnet build backend/RigOps.Api.Tests/RigOps.Api.Tests.csproj --no-restore
+
+      - name: Test
+        run: dotnet test backend/RigOps.Api.Tests/RigOps.Api.Tests.csproj --no-build --verbosity normal
+
+  docker-build:
+    runs-on: ubuntu-latest
+    needs: backend-test
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build all service images
+        run: docker compose build
