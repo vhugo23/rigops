@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using RigOps.Api.Models;
 using RigOps.Api.Repositories;
 using RigOps.Api.DTOs;
+using RigOps.Api.Services;
 
 namespace RigOps.Api.Controllers;
 
@@ -43,6 +44,28 @@ public class WellsController : ControllerBase
             return NotFound();
         }
         return Ok(ToDto(well));
+    }
+    [HttpGet("{id}/telemetry")]
+    public async Task<IActionResult> GetTelemetry(int id, [FromServices] ITelemetryServiceClient telemetryClient, int limit = 50)
+    {
+        var well = await _wellRepository.GetByIdAsync(id);
+        if (well is null)
+        {
+            return NotFound();
+        }
+
+        var result = await telemetryClient.GetRecentReadingsAsync(id, limit);
+
+        if (!result.Success)
+        {
+            return StatusCode(503, new
+            {
+                message = "Telemetry data is temporarily unavailable.",
+                wellId = id
+            });
+        }
+
+        return Content(result.RawJson!, "application/json");
     }
 
     [HttpPost]

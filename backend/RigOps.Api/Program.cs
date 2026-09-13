@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using RigOps.Api.Repositories;
 using RigOps.Api.Data;
+using RigOps.Api.Services;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -9,6 +10,12 @@ builder.Services.AddControllers();
 builder.Services.AddDbContext<RigOpsDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("RigOpsDb")));
 builder.Services.AddScoped<IWellRepository, WellRepository>();
+
+builder.Services.AddHttpClient("TelemetryService", client =>
+{
+    client.BaseAddress = new Uri(builder.Configuration["TelemetryServiceUrl"] ?? "http://localhost:3001");
+});
+builder.Services.AddScoped<ITelemetryServiceClient, TelemetryServiceClient>();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddSwaggerGen();
 
