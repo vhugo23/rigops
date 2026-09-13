@@ -1,0 +1,111 @@
+<div class="overview-page">
+  <div class="page-header">
+    <h1>Operations Overview</h1>
+    <p class="subtitle">What needs attention right now across live drilling operations.</p>
+  </div>
+
+  @if (loading()) {
+    <p class="state-message">Loading overview...</p>
+  } @else if (error()) {
+    <p class="state-message error">{{ error() }}</p>
+  } @else {
+    <div class="metric-grid">
+      <div class="card metric-card">
+        <span class="metric-label">Active Wells</span>
+        <span class="metric-value">{{ activeWellsCount() }}</span>
+      </div>
+      <div class="card metric-card">
+        <span class="metric-label">Active Alerts</span>
+        <span class="metric-value">{{ activeAlertsCount() }}</span>
+      </div>
+      <div class="card metric-card" [class.metric-critical]="criticalWellsCount() > 0">
+        <span class="metric-label">Critical Wells</span>
+        <span class="metric-value">{{ criticalWellsCount() }}</span>
+      </div>
+      <div class="card metric-card">
+        <span class="metric-label">Services Healthy</span>
+        <span class="metric-value">—</span>
+        <span class="metric-note">See System Health panel below</span>
+      </div>
+    </div>
+
+    <div class="panel-grid">
+      <div class="card panel">
+        <div class="panel-header">
+          <h2>Well Status</h2>
+          <a routerLink="/wells">View All Wells →</a>
+        </div>
+        @if (wells().length === 0) {
+          <p class="state-message">No wells available.</p>
+        } @else {
+          <table>
+            <thead>
+              <tr>
+                <th>Well</th>
+                <th>Rig</th>
+                <th>Depth</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (well of wells(); track well.id) {
+                <tr>
+                  <td><a routerLink="/wells/{{ well.id }}">{{ well.name }}</a></td>
+                  <td>{{ well.rigName || '-' }}</td>
+                  <td>{{ well.currentDepth | number }} ft</td>
+                  <td>
+                    <span class="badge" [class]="'status-' + well.status">
+                      <span class="badge-dot" [class]="'dot-status-' + well.status"></span>
+                      {{ statusLabel(well.status) }}
+                    </span>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        }
+      </div>
+
+      <div class="card panel">
+        <div class="panel-header">
+          <h2>Active Alerts</h2>
+          <a routerLink="/alerts">View All Alerts →</a>
+        </div>
+        @if (activeAlerts().length === 0) {
+          <p class="state-message">No active alerts.</p>
+        } @else {
+          <table>
+            <thead>
+              <tr>
+                <th>Severity</th>
+                <th>Well</th>
+                <th>Signal</th>
+                <th>Score</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (alert of activeAlerts(); track alert.id) {
+                <tr>
+                  <td>
+                    <span class="badge" [class]="'severity-' + alert.severity">
+                      {{ severityLabel(alert.severity) }}
+                    </span>
+                  </td>
+                  <td>Well {{ alert.wellId }}</td>
+                  <td>{{ alert.signal }}</td>
+                  <td>{{ alert.anomalyScore | number:'1.2-2' }}</td>
+                  <td>
+                    <span class="badge" [class]="'status-' + alert.status">
+                      {{ alertStatusLabel(alert.status) }}
+                    </span>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        }
+      </div>
+    </div>
+  }
+</div>
