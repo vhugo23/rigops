@@ -3,10 +3,11 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { WellService, Well, TelemetryReading, AnomalyResult } from '../../services/well.service';
 import { RouterLink } from '@angular/router';
+import { TelemetryChart } from '../telemetry-chart/telemetry-chart';
 
 @Component({
   selector: 'app-well-detail',
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, TelemetryChart],
   templateUrl: './well-detail.html',
   styleUrl: './well-detail.css',
 })

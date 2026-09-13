@@ -1,0 +1,7 @@
+<div class="chart-wrapper">
+  @if (readings.length === 0) {
+    <p class="chart-empty">No telemetry data available to chart.</p>
+  } @else {
+    <canvas #canvas [attr.aria-label]="mode === 'pressure' ? 'Pressure trend over time' : 'Correlated drilling signals over time'" role="img"></canvas>
+  }
+</div>

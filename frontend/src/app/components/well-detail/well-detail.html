@@ -19,6 +19,17 @@
       @if (telemetry().length === 0) {
         <p class="state-message">No telemetry data available for this well.</p>
       } @else {
+        <div class="chart-row">
+          <div>
+            <h3 class="chart-title">Pressure Trend</h3>
+            <app-telemetry-chart [readings]="telemetry()" mode="pressure"></app-telemetry-chart>
+          </div>
+          <div>
+            <h3 class="chart-title">Correlated Signals (ROP, Torque, Vibration)</h3>
+            <app-telemetry-chart [readings]="telemetry()" mode="correlated"></app-telemetry-chart>
+          </div>
+        </div>
+
         <table>
           <thead>
             <tr>
