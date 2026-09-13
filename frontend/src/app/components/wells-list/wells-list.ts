@@ -1,10 +1,11 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { WellService, Well } from '../../services/well.service';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-wells-list',
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   templateUrl: './wells-list.html',
   styleUrl: './wells-list.css',
 })

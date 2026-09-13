@@ -23,7 +23,7 @@
       <tbody>
         @for (well of wells(); track well.id) {
           <tr>
-            <td class="well-name">{{ well.name }}</td>
+            <td class="well-name"><a routerLink="/wells/{{ well.id }}">{{ well.name }}</a></td>
             <td>{{ well.rigName || '-' }}</td>
             <td>{{ well.currentDepth | number }} ft</td>
             <td>

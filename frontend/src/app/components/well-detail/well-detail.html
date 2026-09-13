@@ -1,0 +1,82 @@
+<div class="well-detail-page">
+  @if (detailLoading()) {
+    <p class="state-message">Loading well...</p>
+  } @else if (detailError()) {
+    <p class="state-message error">{{ detailError() }}</p>
+  } @else if (well()) {
+    <div class="page-header">
+      <a routerLink="/wells" class="back-link">← Wells</a>
+      <h1>{{ well()!.name }}</h1>
+      <p class="subtitle">Rig: {{ well()!.rigName || '-' }} · Depth: {{ well()!.currentDepth | number }} ft</p>
+    </div>
+
+    <div class="section">
+      <div class="section-header">
+        <h2>Telemetry</h2>
+        <span class="reading-count">{{ telemetry().length }} recent readings</span>
+      </div>
+
+      @if (telemetry().length === 0) {
+        <p class="state-message">No telemetry data available for this well.</p>
+      } @else {
+        <table>
+          <thead>
+            <tr>
+              <th>Time</th>
+              <th>Depth</th>
+              <th>Pressure</th>
+              <th>Torque</th>
+              <th>ROP</th>
+              <th>Vibration</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (reading of telemetry(); track reading.id) {
+              <tr>
+                <td>{{ reading.timestamp | date:'shortTime' }}</td>
+                <td>{{ reading.depth | number:'1.1-1' }} ft</td>
+                <td>{{ reading.pressure | number:'1.0-0' }}</td>
+                <td>{{ reading.torque | number:'1.1-1' }}</td>
+                <td>{{ reading.rate_of_penetration | number:'1.1-1' }}</td>
+                <td>{{ reading.vibration | number:'1.2-2' }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      }
+    </div>
+
+    <div class="section">
+      <div class="section-header">
+        <h2>AI Analysis</h2>
+        <button (click)="runAnomalyCheck()" [disabled]="anomalyLoading()">
+          {{ anomalyLoading() ? 'Analyzing...' : 'Run Anomaly Check' }}
+        </button>
+      </div>
+
+      @if (anomalyError()) {
+        <p class="state-message error">{{ anomalyError() }}</p>
+      } @else if (anomalyResult()) {
+        <div class="anomaly-result" [class]="'severity-' + anomalyResult()!.severity.toLowerCase()">
+          <div class="anomaly-score">
+            <span class="score-value">{{ anomalyResult()!.anomalyScore | number:'1.2-2' }}</span>
+            <span class="severity-label">{{ anomalyResult()!.severity }}</span>
+          </div>
+          @if (anomalyResult()!.signals.length > 0) {
+            <div class="signals">
+              <strong>Contributing signals:</strong>
+              <ul>
+                @for (signal of anomalyResult()!.signals; track signal) {
+                  <li>{{ signal }}</li>
+                }
+              </ul>
+            </div>
+          }
+          <p class="recommendation">{{ anomalyResult()!.recommendation }}</p>
+        </div>
+      } @else {
+        <p class="state-message">Click "Run Anomaly Check" to analyze recent telemetry for this well.</p>
+      }
+    </div>
+  }
+</div>

@@ -13,6 +13,29 @@ export interface Well {
   rigName: string | null;
 }
 
+export interface TelemetryReading {
+  id: number;
+  well_id: number;
+  timestamp: string;
+  depth: number;
+  rate_of_penetration: number;
+  weight_on_bit: number;
+  torque: number;
+  rpm: number;
+  pressure: number;
+  temperature: number;
+  mud_flow: number;
+  vibration: number;
+}
+
+export interface AnomalyResult {
+  wellId: string;
+  anomalyScore: number;
+  severity: string;
+  signals: string[];
+  recommendation: string;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -27,5 +50,13 @@ export class WellService {
 
   getById(id: number): Observable<Well> {
     return this.http.get<Well>(`${this.baseUrl}/${id}`);
+  }
+
+  getTelemetry(id: number, limit = 50): Observable<TelemetryReading[]> {
+    return this.http.get<TelemetryReading[]>(`${this.baseUrl}/${id}/telemetry?limit=${limit}`);
+  }
+
+  checkAnomaly(id: number): Observable<AnomalyResult> {
+    return this.http.get<AnomalyResult>(`${this.baseUrl}/${id}/anomaly-check`);
   }
 }
