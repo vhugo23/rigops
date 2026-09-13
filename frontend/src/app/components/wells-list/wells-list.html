@@ -1,0 +1,32 @@
+<div class="wells-list">
+  <h2>Wells</h2>
+
+  @if (loading()) {
+    <p>Loading wells...</p>
+  } @else if (error()) {
+    <p class="error">{{ error() }}</p>
+  } @else if (wells().length === 0) {
+    <p>No wells found.</p>
+  } @else {
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Rig</th>
+          <th>Depth</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (well of wells(); track well.id) {
+          <tr>
+            <td>{{ well.name }}</td>
+            <td>{{ well.rigName || '—' }}</td>
+            <td>{{ well.currentDepth }} ft</td>
+            <td>{{ well.status }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+</div>
