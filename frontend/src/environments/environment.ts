@@ -4,7 +4,7 @@ export const environment = {
   services: {
     coreApi: 'http://localhost:5275',
     telemetry: 'http://localhost:3001',
-    anomaly: 'http://localhost:8000',
+    anomaly: 'http://localhost:8001',
     notification: 'http://localhost:3002',
   },
 };

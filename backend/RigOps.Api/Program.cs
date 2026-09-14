@@ -26,7 +26,7 @@ builder.Services.AddHttpClient("TelemetryService", client =>
 });
 builder.Services.AddHttpClient("AiService", client =>
 {
-    client.BaseAddress = new Uri(builder.Configuration["AiServiceUrl"] ?? "http://localhost:8000");
+    client.BaseAddress = new Uri(builder.Configuration["AiServiceUrl"] ?? "http://localhost:8001");
 });
 builder.Services.AddScoped<IAnomalyServiceClient, AnomalyServiceClient>();
 builder.Services.AddScoped<ITelemetryServiceClient, TelemetryServiceClient>();
